@@ -150,7 +150,7 @@ void Editor::update(float elapsed_time)
 
 void Editor::test_level() {
   Tile::draw_editor_images = false;
-  DrawingContext::render_lighting = true;
+  Compositor::s_render_lighting = true;
   auto backup_filename = levelfile + "~";
   if(world != NULL)
   {
@@ -358,7 +358,7 @@ void Editor::reload_level() {
   tileset = TileManager::current()->get_tileset(level->get_tileset());
   load_sector("main");
   currentsector->activate("main");
-  currentsector->camera->mode = Camera::MANUAL;
+  currentsector->camera->set_mode(Camera::MANUAL);
   layerselect.refresh_sector_text();
   tileselect.update_mouse_icon();
 }
@@ -377,7 +377,7 @@ void Editor::quit_editor() {
 void Editor::leave()
 {
   MouseCursor::current()->set_icon(NULL);
-  DrawingContext::render_lighting = true;
+  Compositor::s_render_lighting = true;
 }
 
 void
@@ -454,7 +454,7 @@ void
 Editor::event(SDL_Event& ev) {
   if (enabled) {
     if (ev.type == SDL_KEYDOWN && ev.key.keysym.sym == SDLK_F6) {
-      DrawingContext::render_lighting = !DrawingContext::render_lighting;
+      Compositor::s_render_lighting = !Compositor::s_render_lighting;
     }
 
     if ( tileselect.event(ev) ) {

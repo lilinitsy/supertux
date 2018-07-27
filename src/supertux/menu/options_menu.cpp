@@ -38,7 +38,8 @@ enum OptionsMenuIDs {
   MNID_DEVELOPER_MODE,
   MNID_CHRISTMAS_MODE,
   MNID_TRANSITIONS,
-  MNID_CONFIRMATION_DIALOG
+  MNID_CONFIRMATION_DIALOG,
+  MNID_PAUSE_ON_FOCUSLOSS
 };
 
 OptionsMenu::OptionsMenu(bool complete) :
@@ -232,6 +233,8 @@ OptionsMenu::OptionsMenu(bool complete) :
   }
 
   add_toggle(MNID_CONFIRMATION_DIALOG, _("Confirmation Dialog"), &g_config->confirmation_dialog)->set_help("Confirm aborting level");
+  add_toggle(MNID_CONFIRMATION_DIALOG, _("Pause on focus loss"), &g_config->pause_on_focusloss)
+    ->set_help("Automatically pause the game when the window loses focus");
   add_hl();
   add_back(_("Back"));
 }
@@ -249,13 +252,13 @@ OptionsMenu::menu_action(MenuItem* item)
         if (aspect_ratios[next_aspect_ratio] == _("auto"))
         {
           g_config->aspect_size = Size(0, 0); // Magic values
-          VideoSystem::current()->get_renderer().apply_config();
+          VideoSystem::current()->apply_config();
           MenuManager::instance().on_window_resize();
         }
         else if (sscanf(aspect_ratios[next_aspect_ratio].c_str(), "%d:%d",
                         &g_config->aspect_size.width, &g_config->aspect_size.height) == 2)
         {
-          VideoSystem::current()->get_renderer().apply_config();
+          VideoSystem::current()->apply_config();
           MenuManager::instance().on_window_resize();
         }
         else
@@ -274,7 +277,7 @@ OptionsMenu::menu_action(MenuItem* item)
       {
         g_config->magnification /= 100.0f;
       }
-      VideoSystem::current()->get_renderer().apply_config();
+      VideoSystem::current()->apply_config();
       MenuManager::instance().on_window_resize();
       if(GameSession::current() != NULL)
       {
@@ -312,7 +315,7 @@ OptionsMenu::menu_action(MenuItem* item)
       break;
 
     case MNID_FULLSCREEN:
-      VideoSystem::current()->get_renderer().apply_config();
+      VideoSystem::current()->apply_config();
       MenuManager::instance().on_window_resize();
       g_config->save();
       break;
